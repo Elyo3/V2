@@ -23,8 +23,7 @@ var sizeShrinking = 0.05;
 
 var matrixLoc;
 
-window.onload = function init()
-{
+window.onload = function init() {
     canvas = document.getElementById( "gl-canvas" );
     
     gl = WebGLUtils.setupWebGL( canvas );
@@ -84,10 +83,7 @@ window.onload = function init()
 }
 
 
-
-function area()
-{
-
+function area() {
     for (var i = 0; i < 10; i++){
         gameArea[i] = [];
         oldArea[i] = [];
@@ -103,8 +99,7 @@ function area()
 
 }
 
-function colorCube()
-{
+function colorCube() {
     quad( 1, 0, 3, 2 );
     quad( 2, 3, 7, 6 );
     quad( 3, 0, 4, 7 );
@@ -114,45 +109,45 @@ function colorCube()
 }
 
 
-function quad(a, b, c, d) 
-{
-    var vertices = [
-        vec3( -0.45, -0.45,  0.45 ),
-        vec3( -0.45,  0.45,  0.45 ),
-        vec3(  0.45,  0.45,  0.45 ),
-        vec3(  0.45, -0.45,  0.45 ),
-        vec3( -0.45, -0.45, -0.45 ),
-        vec3( -0.45,  0.45, -0.45 ),
-        vec3(  0.45,  0.45, -0.45 ),
-        vec3(  0.45, -0.45, -0.45 )
+function quad(a, b, c, d) {
+    const vertices = [
+        vec3(-0.45, -0.45, 0.45),
+        vec3(-0.45, 0.45, 0.45),
+        vec3(0.45, 0.45, 0.45),
+        vec3(0.45, -0.45, 0.45),
+        vec3(-0.45, -0.45, -0.45),
+        vec3(-0.45, 0.45, -0.45),
+        vec3(0.45, 0.45, -0.45),
+        vec3(0.45, -0.45, -0.45)
     ];
 
-    var vertexColors = [
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-        [ 1.0, 0.0, 0.0, 1.0 ],  // red
-        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
-        [ 0.0, 1.0, 0.0, 1.0 ],  // green
-        [ 0.0, 0.0, 1.0, 1.0 ],  // blue
-        [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
-        [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
-        [ 1.0, 1.0, 1.0, 1.0 ]   // white
+    const vertexColors = [
+        [0.0, 0.0, 0.0, 1.0],  // black
+        [1.0, 1.0, 0.0, 1.0],  // yellow
+        [1.0, 0.0, 0.0, 1.0],  // red
+        [0.0, 0.0, 1.0, 1.0],  // blue
+        [0.0, 1.0, 0.0, 1.0],  // green
+        [0.0, 1.0, 1.0, 1.0],  // cyan
+        [1.0, 0.0, 1.0, 1.0],  // magenta
+        [1.0, 1.0, 1.0, 1.0]   // white
     ];
 
-    //vertex color assigned by the index of the vertex
-    var indices = [ a, b, c, a, c, d ];
+    const indices = [a, b, c, a, c, d];
 
-    for ( var i = 0; i < indices.length; ++i ) {
-        points.push( vertices[indices[i]] );
+    indices.forEach(index => {
+        points.push(vertices[index]);
         colors.push(vertexColors[a]);
-        
-    }
+    });
 }
 
-function checkIfDead(){
-    for (var i = 0; i < 10; i++){
-        for (var j = 0; j < 10; j++){
-            for (var p = 0; p < 10; p++){
-                if(gameArea[i][j][p] === 1) return false;
+
+function checkIfDead() {
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            for (let p = 0; p < 10; p++) {
+                if (gameArea[i][j][p] === 1) {
+                    return false;
+                }
             }
         }
     }
@@ -160,118 +155,92 @@ function checkIfDead(){
 }
 
 
-function reactiveBlocks(){
-
-    for (var i = 0; i < 10; i++){
-
-        for (var j = 0; j < 10; j++){
-
-            for (var p = 0; p < 10; p++){
+function reactiveBlocks() {
+    // Copy current game area to old area
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            for (let p = 0; p < 10; p++) {
                 oldArea[i][j][p] = gameArea[i][j][p];
             }
         }
     }
 
-    for (var i = 0; i < 10; i++){
+    // Update game area based on neighbor counts
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            for (let p = 0; p < 10; p++) {
+                let count = 0;
 
-        for (var j = 0; j < 10; j++){
-
-            for (var p = 0; p < 10; p++){
-                // now we have each coordinate
-
-                //now lets see the neighbor count 
-                var count = 0;
-
-                for (var u = i - 1; u <= i + 1; u++){
-                    for (var g = j - 1; g <= j + 1; g++){
-                        for (var h = p-1; h <= p + 1; h++){
-                            count += oldArea[(u + 10) % 10][(g + 10) % 10][(h + 10) % 10]; //account for cube itself (gaeti verid ad telja sig sjalfan sem neighbor)
-                                            
+                // Count neighbors
+                for (let u = i - 1; u <= i + 1; u++) {
+                    for (let g = j - 1; g <= j + 1; g++) {
+                        for (let h = p - 1; h <= p + 1; h++) {
+                            count += oldArea[(u + 10) % 10][(g + 10) % 10][(h + 10) % 10];
                         }
                     }
                 }
-                if (oldArea[i][j][p] === 1){
+
+                // Adjust count for the current cell
+                if (oldArea[i][j][p] === 1) {
                     count--;
                 }
-                
 
-                // if the living point should die
-                if ((count !== 5 && count !== 6 && count !== 7) && oldArea[i][j][p] === 1){
+                // Determine cell's next state
+                if (oldArea[i][j][p] === 1 && (count < 5 || count > 7)) {
                     gameArea[i][j][p] = 0;
-                    console.log("point died ", " in x: ", i, " in y: ", j, " in z: ", p);
-                }
-                
-                // if the dead point should revive
-                else if(count === 6 && oldArea[i][j][p] === 0){
+                    console.log(`Point died at x: ${i}, y: ${j}, z: ${p}`);
+                } else if (oldArea[i][j][p] === 0 && count === 6) {
                     gameArea[i][j][p] = 1;
-                    console.log("point revived");
-                }
-                else {
+                    console.log("Point revived");
+                } else {
                     gameArea[i][j][p] = oldArea[i][j][p];
                 }
-                
             }
         }
     }
-    console.log("created a new game area");
+    console.log("Created a new game area");
 }
 
-function gameloop(){
-    console.log("went into gameloop");
+
+function gameloop() {
+    console.log("Entered gameloop");
     if (!checkIfDead()) {
         sizeIncrease = 0;
         reactiveBlocks();
-        setTimeout(function(){
-            gameloop();
-        }, 2000);
+        setTimeout(gameloop, 2000);
     }
 }
 
 
-function render()
-{
-    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+function render() {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if(sizeIncrease <= 0.99){
-        sizeIncrease = sizeIncrease + 0.02;
-    }
+    sizeIncrease = Math.min(sizeIncrease + 0.02, 0.99);
 
-    var mv = mat4();
-    mv = mult( mv, rotateX(spinX) );
-    mv = mult( mv, rotateY(spinY) ) ;
-    mv = mult( mv, scalem( 0.05, 0.05, 0.05 ) );  
+    let mv = mat4();
+    mv = mult(mv, rotateX(spinX));
+    mv = mult(mv, rotateY(spinY));
+    mv = mult(mv, scalem(0.05, 0.05, 0.05));
 
-    for (var i = 0; i < 10; i++){
-        for (var j = 0; j < 10; j++){
-            for (var p = 0; p < 10; p++){
-                // if we want to create a cube
-                if (gameArea[i][j][p] === 1 && oldArea[i][j][p] === 0){
-                    mv1 = mult(mv, translate(i-5,j-5,p-5));
-                    
+    for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+            for (let p = 0; p < 10; p++) {
+                let mv1 = mult(mv, translate(i - 5, j - 5, p - 5));
+
+                if (gameArea[i][j][p] === 1 && oldArea[i][j][p] === 0) {
                     mv1 = mult(mv1, scalem(sizeIncrease - 0.01, sizeIncrease - 0.01, sizeIncrease - 0.01));
-                    
-                    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-                    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-                }
-                // if we want to shrink a cube
-                else if(gameArea[i][j][p] === 0 && oldArea[i][j][p] === 1){
-                    mv1 = mult(mv, translate(i-5,j-5,p-5));
-                    
+                } else if (gameArea[i][j][p] === 0 && oldArea[i][j][p] === 1) {
                     mv1 = mult(mv1, scalem(1 - sizeIncrease, 1 - sizeIncrease, 1 - sizeIncrease));
-                    
-                    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-                    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
+                } else if (gameArea[i][j][p] !== 1) {
+                    continue;
                 }
-                // if we want to do nothing with a cube
-                else if(gameArea[i][j][p] === 1) {
-                    mv1 = mult(mv, translate(i-5,j-5,p-5));
-                    
-                    gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
-                    gl.drawArrays( gl.TRIANGLES, 0, numVertices );
-                }
+
+                gl.uniformMatrix4fv(matrixLoc, false, flatten(mv1));
+                gl.drawArrays(gl.TRIANGLES, 0, numVertices);
             }
         }
     }
 
-    requestAnimFrame( render );
+    requestAnimFrame(render);
 }
+
