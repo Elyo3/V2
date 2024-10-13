@@ -19,8 +19,6 @@ var origY;
 var sizeIncrease = 0.00;
 var sizeShrinking = 0.05;
 
-
-
 var matrixLoc;
 
 window.onload = function init() {
@@ -96,7 +94,6 @@ function area() {
             }
         }
     }
-
 }
 
 function colorCube() {
@@ -198,12 +195,10 @@ function reactiveBlocks() {
             }
         }
     }
-    console.log("Created a new game area");
 }
 
 
 function gameloop() {
-    console.log("Entered gameloop");
     if (!checkIfDead()) {
         sizeIncrease = 0;
         reactiveBlocks();
